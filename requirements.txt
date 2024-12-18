@@ -1,0 +1,4 @@
+requests==2.31.0
+beautifulsoup4==4.13.0
+publicsuffix2==2.20191221
+pyopenssl==23.0.0

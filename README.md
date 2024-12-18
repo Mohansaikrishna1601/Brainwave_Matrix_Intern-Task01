@@ -30,8 +30,11 @@ This Python script implements a tool to check for potential phishing URLs. It an
     git clone https://github.com/Mohansaikrishna1601/PRODIGY_CS_01.git
     cd PRODIGY_CS_01
 
-### Install Required Libraries
-    pip install requests beautifulsoup4 publicsuffix2 pyopenssl
+### Install Dependencies:
+   Use the following command to install the required libraries listed in requirements.txt:
+                       
+    pip install -r requirements.txt
+
 
 ### Run the Script
     python phishing_indicator.py

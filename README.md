@@ -46,9 +46,9 @@ This Python script implements a tool to check for potential phishing URLs. It an
     python phishing_indicator.py
 
 ### Example
-Enter URLs separated by a comma: http://example.com, http://test.com
+### Enter URLs separated by a comma: http://example.com, http://test.com
 
-Checking URL: http://example.com
+### Checking URL: http://example.com
 
 [Domain] Extracted domain: example.com
 
@@ -61,7 +61,7 @@ Checking URL: http://example.com
 ❌ The URL http://example.com is likely a phishing link.
 
 
-Checking URL: http://test.com
+### Checking URL: http://test.com
 
 [Domain] Extracted domain: test.com
 

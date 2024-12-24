@@ -5,12 +5,6 @@ import ssl
 from OpenSSL import crypto
 from publicsuffix2 import get_sld
 
-# List of known legitimate domains (include base domains only)
-legitimate_domains = [
-    'instagram.com', 'facebook.com', 'twitter.com', 'paypal.com',
-    'microsoft.com', 'google.com', 'youtube.com', 'amazon.com'
-]
-
 # List of common phishing indicators in URLs
 phishing_indicators = [
     'login', 'verify', 'update', 'secure', 'account', 'banking',
@@ -65,34 +59,36 @@ def is_phishing_url(url):
 
         if not domain:
             print("[Error] Could not extract a valid domain.")
-            return True
+            return "Invalid"  # Invalid URL
 
         print(f"[Domain] Extracted domain: {domain}")
 
-        # 1. Check if the domain is legitimate
-        if domain in legitimate_domains:
-            return False  # Legitimate domain, not phishing
-
-        # 2. Check for phishing indicators in the URL
+        # 1. Check for phishing indicators in the URL
         if any(indicator in url.lower() for indicator in phishing_indicators):
             print(f"[Phishing Indicator] Suspicious keyword found in URL: {url}")
-            return True
+            return "Phishing"
+
+        # 2. Check for suspicious subdomains
+        subdomains = parsed_url.netloc.split('.')
+        if any(indicator in subdomains for indicator in phishing_indicators):
+            print(f"[Phishing Indicator] Suspicious subdomain found in URL: {url}")
+            return "Phishing"
 
         # 3. Validate SSL Certificate
         if not validate_ssl(domain):
             print(f"[SSL] Invalid or expired SSL certificate for domain: {domain}")
-            return True
+            return "Invalid"
 
         # 4. Fetch and analyze page content
         try:
             response = requests.get(url, timeout=5)
             if response.status_code != 200:
                 print(f"[HTTP] Failed to fetch content: {response.status_code}")
-                return True  # Treat inaccessible URLs with caution
+                return "Invalid"  # Treat inaccessible URLs with caution
             content = response.content
         except requests.RequestException:
             print(f"[HTTP] Unable to fetch content for {url}")
-            return False  # Skip inaccessible URLs for now
+            return "Invalid"
 
         # Parse page content
         soup = BeautifulSoup(content, 'html.parser')
@@ -101,18 +97,18 @@ def is_phishing_url(url):
         # Check for phishing phrases
         if any(phrase in text for phrase in phishing_phrases):
             print(f"[Content] Phishing phrases detected in page content.")
-            return True
+            return "Phishing"
 
         # Check for urgency phrases
         if any(phrase in text for phrase in urgency_phrases):
             print(f"[Content] Urgency phrases detected in page content.")
-            return True
+            return "Phishing"
 
     except Exception as e:
         print(f"[Error] An unexpected error occurred: {e}")
-        return True  # Default to phishing if there's an error
+        return "Invalid"  # Default to invalid if there's an error
 
-    return False  # If all checks pass, URL is safe
+    return "Safe"
 
 # Get URLs from user input
 urls = input("Enter URLs separated by a comma: ").split(',')
@@ -120,7 +116,12 @@ urls = input("Enter URLs separated by a comma: ").split(',')
 for url in urls:
     url = url.strip()  # Remove any leading/trailing whitespace
     print(f"\nChecking URL: {url}")
-    if is_phishing_url(url):
-        print(f"❌ The URL {url} is likely a phishing link.")
-    else:
+    result = is_phishing_url(url)
+    if result == "Invalid":
+        print(f"❌ The URL {url} is invalid.")
+    elif result == "Phishing":
+        print(f"⚠️ The URL {url} is likely a phishing link.")
+    elif result == "Safe":
         print(f"✅ The URL {url} seems safe.")
+    else:
+        print(f"❓ The URL {url} could not be validated.")

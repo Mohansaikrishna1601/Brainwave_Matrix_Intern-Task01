@@ -49,16 +49,26 @@ This Python script implements a tool to check for potential phishing URLs. It an
 Enter URLs separated by a comma: http://example.com, http://test.com
 
 Checking URL: http://example.com
+
 [Domain] Extracted domain: example.com
+
 [SSL] Validating SSL for: example.com
+
 [SSL] Could not validate SSL for example.com: hostname 'example.com' doesn't match 'example.com'
+
 [Phishing Indicator] Suspicious keyword found in URL: http://example.com
+
 ❌ The URL http://example.com is likely a phishing link.
 
+
 Checking URL: http://test.com
+
 [Domain] Extracted domain: test.com
+
 [SSL] Validating SSL for: test.com
+
 [SSL] Valid SSL certificate for domain: test.com
+
 ✅ The URL http://test.com seems safe.
 
 
